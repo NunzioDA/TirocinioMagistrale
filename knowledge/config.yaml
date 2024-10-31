@@ -49,13 +49,10 @@ predicates:
         - in: [person, 12] 
           activation: relu
 
-        - hidden: [12, 12]
+        - hidden: [12, 8]
           activation: relu
 
-        - hidden: [12,9]
-          activation: relu
-
-        - out: [9, 1]
+        - out: [8, 1]
           activation: sigmoid
 
 

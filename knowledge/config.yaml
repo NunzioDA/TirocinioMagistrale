@@ -1,0 +1,80 @@
+instances:
+  - person
+  - y
+
+features:
+  person:
+    - Pregnancies
+    - Glucose
+    - BloodPressure
+    - SkinThickness
+    - Insulin
+    - BMI
+    - DiabetesPedigreeFunction
+    - Age
+  y:
+    - Outcome
+
+train:
+  medical:
+    instances: [person]
+    targets: [y]
+    path: training_cache/train.csv
+    batch_size: 32
+
+validation:
+  medical:
+    instances: [person]
+    targets: [y]
+    path: training_cache/val.csv
+    batch_size: 32
+
+test:
+  medical:
+    instances: [person]
+    targets: [y]
+    path: training_cache/test.csv
+    batch_size: 32
+  
+constants:
+  - diabetes : 1
+  - healthy : 0
+
+predicates:
+  Diabetic:
+    args: [person]
+    structure:
+      type: feed-forward
+      layers:
+        - in: [person, 12] 
+          activation: relu
+
+        - hidden: [12, 12]
+          activation: relu
+
+        - hidden: [12,9]
+          activation: relu
+
+        - out: [9, 1]
+          activation: sigmoid
+
+
+          
+constraints:
+  - rule: isdiabetic
+    clause: all person. (y == diabetes -> Diabetic(person))
+    weight: 3
+
+  - rule: isnotdiabetic
+    clause: all person. (y == healthy -> not Diabetic(person))
+    weight: 1
+
+  - rule: firstrule
+    clause: all person. (((person[BMI] < 26) and (person[Glucose] < 101 )) -> not Diabetic(person))
+    weight: 1
+
+  - rule: secondrule
+    clause: all person. (((person[BMI] > 29) and (person[Glucose] > 125 )) -> Diabetic(person))
+    weight: 2
+
+
